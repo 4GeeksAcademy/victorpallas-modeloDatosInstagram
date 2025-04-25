@@ -1,3 +1,5 @@
+import enum
+from sqlalchemy import Enum
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import String, Boolean
 from sqlalchemy.orm import Mapped, mapped_column
@@ -5,12 +7,51 @@ from sqlalchemy.orm import Mapped, mapped_column
 db = SQLAlchemy()
 
 class User(db.Model):
+    __tablename__= "User"
+
     id: Mapped[int] = mapped_column(primary_key=True)
+    username: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
+    firtsname: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
+    lastname: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
-    password: Mapped[str] = mapped_column(nullable=False)
-    is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False)
 
 
+
+class Follower(db.Model):
+    __tablename__= "Follower"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_from_id: Mapped[int] = mapped_column(primary_key=False)
+    user_to_id: Mapped[int] = mapped_column(primary_key=False)
+
+
+class Media(db.Model):
+    __tablename__= "Media"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    #type: Mapped[enum] = mapped_column(primary_key=False)
+    url: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
+    post_id: Mapped[int] = mapped_column(primary_key=False)
+
+
+class Post(db.Model):
+    __tablename__= "Post"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(primary_key=False)
+
+class Comment(db.Model):
+    __tablename__= "Comment"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    comment_text: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
+    author_id: Mapped[int] = mapped_column(primary_key=False)
+    post_id: Mapped[int] = mapped_column(primary_key=False)
+
+
+
+    
+    
     def serialize(self):
         return {
             "id": self.id,
